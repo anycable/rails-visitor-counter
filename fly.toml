@@ -1,0 +1,56 @@
+app = "withered-resonance-2716"
+kill_signal = "SIGINT"
+kill_timeout = 5
+
+[build]
+  [build.args]
+    BUILD_COMMAND = "bin/rails fly:build"
+    SERVER_COMMAND = "bin/rails fly:server"
+
+[deploy]
+  release_command = "bin/rails fly:release"
+
+[env]
+  PORT = "8080"
+  DATABASE_URL = "sqlite3:///mnt/volume/production.sqlite3"
+
+[processes]
+app = "bin/rails fly:server[web=1;redis=1;anycable-rpc=1;anycable-go=1]"
+
+[mounts]
+  source = "withered_resonance_2716_volume"
+  destination = "/mnt/volume"
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+
+[[services]]
+  http_checks = []
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+  script_checks = []
+  [services.concurrency]
+    hard_limit = 2500
+    soft_limit = 2000
+    type = "connections"
+
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"
+
+[[statics]]
+  guest_path = "/app/public"
+  url_prefix = "/"

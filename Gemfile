@@ -74,4 +74,6 @@ group :test do
   gem "webdrivers"
 end
 
-gem "fly.io-rails", "~> 0.1.8", :git => "https://github.com/rubys/fly.io-rails.git"
+gem "fly.io-rails", "~> 0.1.8"#, :git => "https://github.com/rubys/fly.io-rails.git"
+
+gem "anycable-rails", "~> 1.3"
